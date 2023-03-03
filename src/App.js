@@ -1,23 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
-
+import { createContext, useState } from "react";
+import "./App.css";
+import { Landing } from "./components/Landing";
+export const DataContext = createContext();
 function App() {
+  const [tabValue, setTabValue] = useState("1");
+  const [state, setState] = useState({
+    BasiceSalary: "",
+    Hra: "",
+    standardDeduction: 50000,
+    otherAllowence: "",
+    lta: "",
+    eightyC: "",
+    eightyTta: "",
+    eightyD: "",
+    rent: "",
+    HraByRent: "",
+    HraExmption: "",
+    totalSalary: "",
+    totalDeduction: "",
+    taxableAmount: "",
+    newTax: "",
+    oldTax: "",
+    msg: "",
+    backButton: false,
+  });
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h2 className="App__head">Tax calculator</h2>
+      <DataContext.Provider value={{ tabValue, setTabValue, state, setState }}>
+        <Landing />
+      </DataContext.Provider>
     </div>
   );
 }
