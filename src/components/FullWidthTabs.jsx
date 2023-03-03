@@ -10,30 +10,6 @@ import { TaxSummary } from "./TaxSummary";
 import { DataContext } from "../App";
 export default function FullWidthTabs() {
   const StateValue = useContext(DataContext);
-  // const handleChange = (event, newValue) => {
-  //   if (StateValue.tabValue === "1") {
-  //     if (
-  //       StateValue.state.BasiceSalary === "" ||
-  //       StateValue.state.Hra === "" ||
-  //       StateValue.state.otherAllowence === "" ||
-  //       StateValue.state.lta === ""
-  //     ) {
-  //       alert("validate")
-  //       StateValue.setState({
-  //         msg: "Please fill all the field",
-  //         BasiceSalary: StateValue.state.BasiceSalary,
-  //         Hra: StateValue.state.Hra,
-  //         otherAllowence: StateValue.state.otherAllowence,
-  //         lta: StateValue.state.lta,
-  //       });
-  //     } else {
-  //       alert("chnge");
-  //       console.log(StateValue.state.BasiceSalary);
-  //       console.log(StateValue.state);
-  //       StateValue.setTabValue(newValue);
-  //     }
-  //   }
-  // };
   const handleChange = () => {
     StateValue.setState({ msg: "Please click next to go next page" });
   };
