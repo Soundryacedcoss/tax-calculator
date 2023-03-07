@@ -1,6 +1,6 @@
 import { createContext, useState } from "react";
 import "./App.css";
-import { Landing } from "./components/Landing";
+import FullWidthTabs from "./components/FullWidthTabs";
 export const DataContext = createContext();
 function App() {
   const [tabValue, setTabValue] = useState("1");
@@ -22,13 +22,16 @@ function App() {
     newTax: "",
     oldTax: "",
     msg: "",
+    metro: "",
     backButton: false,
   });
   return (
     <div className="App">
       <h2 className="App__head">Tax calculator</h2>
       <DataContext.Provider value={{ tabValue, setTabValue, state, setState }}>
-        <Landing />
+        <div className="Landing">
+          <FullWidthTabs />
+        </div>
       </DataContext.Provider>
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { DataContext } from "../../App";
 export const Deduction = () => {
   // regex for validation
@@ -10,13 +10,8 @@ export const Deduction = () => {
   const EightD = useRef();
   const EightTta = useRef();
   const Rent = useRef();
-  const yesInMetro = useRef();
-  const NotInMetro = useRef();
-  const [check, setCheck] = useState();
   // input value
   useEffect(() => {
-    console.log(state.state);
-    // if (state.state.backButton) {
     if (EightC.current.value === "") {
       EightC.current.value = state.state.eightyC;
     }
@@ -29,98 +24,50 @@ export const Deduction = () => {
     if (Rent.current.value === "") {
       Rent.current.value = state.state.rent;
     }
-    // }
   }, []);
+
+  // validation
+  const inputHandler = () => {
+    if (!regex.test(EightC.current.value)) {
+      EightC.current.value = "";
+    } else if (!regex.test(EightD.current.value)) {
+      EightD.current.value = "";
+    } else if (!regex.test(EightTta.current.value)) {
+      EightTta.current.value = "";
+    } else if (!regex.test(Rent.current.value)) {
+      Rent.current.value = "";
+    }
+  };
+
+  const yesHandler = (e) => {
+    state.setState({ ...state.state, metro: e.target.value });
+  };
   // variables
   let hraEmption;
   let hrabyrent;
   let eightyC1;
   let eightyTta1;
   let eightyD1;
-  let taxableAmount;
+  let taxableAmount1;
   let tax;
   let Newtax;
-  // validation
-  const eightyCHandler = () => {
-    if (!regex.test(EightC.current.value)) {
-      EightC.current.value = "";
-    }
-  };
-  const eightyDHandler = () => {
-    if (!regex.test(EightD.current.value)) {
-      EightD.current.value = "";
-    }
-  };
-  const eightyTtaHandler = () => {
-    if (!regex.test(EightTta.current.value)) {
-      EightTta.current.value = "";
-    }
-  };
-  const rentHandler = () => {
-    if (!regex.test(Rent.current.value)) {
-      Rent.current.value = "";
-    }
-  };
-  // calcuating Hra exemption
+  // calculating Hra exemption
   const hraExamption = () => {
     const HraByEmp = state.state.Hra;
     hrabyrent =
       Rent.current.value - state.state.BasiceSalary * 0.1 > 0
         ? Rent.current.value - state.state.BasiceSalary * 0.1
         : 0;
-    const halfOfSalary =
-      yesInMetro.current.value === "yes"
-        ? state.state.BasiceSalary * 0.5
-        : NotInMetro.current.value === "no"
-        ? state.state.BasiceSalary * 0.4
-        : null;
+    let halfOfSalary;
+    if (state.state.metro === "yes") {
+      halfOfSalary = state.state.BasiceSalary * 0.5;
+    } else if (state.state.metro === "no") {
+      halfOfSalary = state.state.BasiceSalary * 0.4;
+    }
     hraEmption =
       Math.min(HraByEmp, hrabyrent, halfOfSalary) > 0
         ? Math.min(HraByEmp, hrabyrent, halfOfSalary)
         : 0;
-  };
-  // Calculate handler
-  const CalculateHandler = () => {
-    if (
-      EightC.current.value === "" ||
-      EightD.current.value === "" ||
-      EightTta.current.value === "" ||
-      Rent.current.value === ""
-    ) {
-      state.setState({
-        msg: "Please fill all the field and if not valid then write 0",
-      });
-    }
-    state.setTabValue("3");
-    eightyC1 = EightC.current.value > 150000 ? 150000 : EightC.current.value;
-    eightyTta1 = EightTta.current.value > 8000 ? 8000 : EightTta.current.value;
-    eightyD1 = EightD.current.value > 12000 ? 12000 : EightD.current.value;
-    hraExamption();
-    totalDeduction();
-    taxableAmount =
-      state.state.totalSalary - totalDeduction1 > 0
-        ? state.state.totalSalary - totalDeduction1
-        : 0;
-    existingTax();
-    newTax();
-    state.setState({
-      standardDeduction: 50000,
-      eightyC: eightyC1,
-      eightyTta: eightyTta1,
-      eightyD: eightyD1,
-      rent: Rent.current.value,
-      BasiceSalary: state.state.BasiceSalary,
-      Hra: state.state.Hra,
-      otherAllowence: state.state.otherAllowence,
-      lta: state.state.lta,
-      HraByRent: hrabyrent,
-      HraExmption: hraEmption,
-      totalSalary: state.state.totalSalary,
-      totalDeduction: totalDeduction1,
-      taxableAmount: taxableAmount,
-      newTax: Newtax,
-      oldTax: tax,
-    });
   };
   // Calculating total deduction
   let totalDeduction1;
@@ -131,46 +78,97 @@ export const Deduction = () => {
       parseInt(eightyD1) +
       parseInt(eightyTta1) +
       hraEmption;
+    // state.setState({ ...state.state, totalDeduction: totalDeduction1 });
+    console.log(totalDeduction1);
   };
-  // Calculaing taxable amount according to old tax regime
-  const existingTax = () => {
-    let taxableAmount1 = taxableAmount - 250000;
-    if (taxableAmount1 <= 250000) {
-      tax = 0;
-    } else if (taxableAmount >= 250001 && taxableAmount1 <= 500000) {
-      taxableAmount1 = taxableAmount1 - 250000;
-      tax = taxableAmount1 * 0.05;
-    } else if (taxableAmount >= 500001 && taxableAmount1 <= 1000000) {
-      taxableAmount1 = taxableAmount1 - 500000;
-      tax = taxableAmount1 * 0.2 + 12500;
-    } else if (taxableAmount > 1000000) {
-      taxableAmount1 = taxableAmount1 - 1000000;
-      tax = taxableAmount1 * 0.3 + 112500;
+  // Calculate handler
+  const CalculateHandler = () => {
+    if (
+      EightC.current.value === "" ||
+      EightD.current.value === "" ||
+      EightTta.current.value === "" ||
+      Rent.current.value === "" ||
+      state.state.metro === ""
+    ) {
+      state.setState({
+        ...state.state,
+        msg: "Please fill all the field and if not valid then write 0",
+      });
+    } else {
+      state.setTabValue("3");
+      eightyC1 = EightC.current.value > 150000 ? 150000 : EightC.current.value;
+      eightyTta1 =
+        EightTta.current.value > 8000 ? 8000 : EightTta.current.value;
+      eightyD1 = EightD.current.value > 12000 ? 12000 : EightD.current.value;
+      hraExamption();
+      totalDeduction();
+      console.log(state.state.totalSalary - state.state.totalDeduction);
+      taxableAmount1 =
+        state.state.totalSalary - state.state.totalDeduction > 0
+          ? state.state.totalSalary - state.state.totalDeduction
+          : 0;
+      console.log(taxableAmount1);
+      // state.setState({...state.state, })
+      existingTax();
+      newTax();
+      state.setState({
+        ...state.state,
+        standardDeduction: 50000,
+        eightyC: eightyC1,
+        eightyTta: eightyTta1,
+        eightyD: eightyD1,
+        rent: Rent.current.value,
+        taxableAmount: taxableAmount1,
+        HraByRent: hrabyrent,
+        HraExmption: hraEmption,
+        totalDeduction: totalDeduction1,
+        newTax: Newtax,
+        oldTax: tax,
+      });
     }
   };
-  // Calculaing taxable amount according yo new tax regime
+  console.log(state.state);
+
+  // Calculaing taxable amount according to old tax regime
+  const existingTax = () => {
+    let taxamount = taxableAmount1;
+    if (taxamount <= 250000) {
+      tax = 0;
+    } else if (taxamount >= 250001 && taxamount <= 500000) {
+      taxamount = taxamount - 250000;
+      tax = taxamount * 0.05;
+    } else if (taxamount >= 500001 && taxamount <= 1000000) {
+      taxamount = taxamount - 500000;
+      tax = taxamount * 0.2 + 12500;
+    } else if (taxamount > 1000000) {
+      taxamount = taxamount - 1000000;
+      tax = taxamount * 0.3 + 112500;
+      console.log(taxamount);
+    }
+  };
+  // Calculating taxable amount according to new tax regime
   const newTax = () => {
-    let taxableAmount1 = taxableAmount - 250000;
-    if (taxableAmount1 <= 250000) {
+    let taxamount = taxableAmount1;
+    if (taxamount <= 250000) {
       Newtax = 0;
-    } else if (taxableAmount1 >= 250001 && taxableAmount1 <= 500000) {
-      taxableAmount1 = taxableAmount1 - 250000;
-      Newtax = taxableAmount1 * 0.05;
-    } else if (taxableAmount1 >= 500001 && taxableAmount1 <= 750000) {
-      taxableAmount1 = taxableAmount1 - 500000;
-      Newtax = taxableAmount1 * 0.1 + 12500;
-    } else if (taxableAmount1 >= 750001 && taxableAmount1 <= 1000000) {
-      taxableAmount1 = taxableAmount1 - 750000;
-      Newtax = taxableAmount1 * 0.15 + 37500;
-    } else if (taxableAmount1 >= 1000001 && taxableAmount1 <= 1250000) {
-      taxableAmount1 = taxableAmount1 - 1000000;
-      Newtax = taxableAmount1 * 0.2 + 75000;
-    } else if (taxableAmount1 >= 1250001 && taxableAmount1 <= 1500000) {
-      taxableAmount1 = taxableAmount1 - 1250000;
-      Newtax = taxableAmount1 * 0.25 + 125000;
-    } else if (taxableAmount1 > 1500000) {
-      taxableAmount1 = taxableAmount1 - 1500000;
-      Newtax = taxableAmount1 * 0.3 + 18500;
+    } else if (taxamount >= 250001 && taxamount <= 500000) {
+      taxamount = taxamount - 250000;
+      Newtax = taxamount * 0.05;
+    } else if (taxamount >= 500001 && taxamount <= 750000) {
+      taxamount = taxamount - 500000;
+      Newtax = taxamount * 0.1 + 12500;
+    } else if (taxamount >= 750001 && taxamount <= 1000000) {
+      taxamount = taxamount - 750000;
+      Newtax = taxamount * 0.15 + 37500;
+    } else if (taxamount >= 1000001 && taxamount <= 1250000) {
+      taxamount = taxamount - 1000000;
+      Newtax = taxamount * 0.2 + 75000;
+    } else if (taxamount >= 1250001 && taxamount <= 1500000) {
+      taxamount = taxamount - 1250000;
+      Newtax = taxamount * 0.25 + 125000;
+    } else if (taxamount > 1500000) {
+      taxamount = taxamount - 1500000;
+      Newtax = taxamount * 0.3 + 187500;
     }
   };
   // back handler
@@ -181,25 +179,18 @@ export const Deduction = () => {
     state.setTabValue("1");
     // tracking data at back button
     state.setState({
+      ...state.state,
       backButton: true,
       standardDeduction: 50000,
       eightyC: eightyC1,
       eightyTta: eightyTta1,
       eightyD: eightyD1,
       rent: Rent.current.value,
-      BasiceSalary: state.state.BasiceSalary,
-      Hra: state.state.Hra,
-      otherAllowence: state.state.otherAllowence,
-      lta: state.state.lta,
-      HraByRent: state.state.HraByRent,
-      HraExmption: state.state.HraExmption,
-      totalSalary: state.state.totalSalary,
-      totalDeduction: state.state.totalDeduction,
-      taxableAmount: state.state.taxableAmount,
-      newTax: state.state.newTax,
-      oldTax: state.state.oldTax,
-      msg: "",
     });
+  };
+  // close validation msg
+  const CloseHandler = () => {
+    state.setState({ msg: "" });
   };
   return (
     <div>
@@ -220,7 +211,7 @@ export const Deduction = () => {
           placeholder="Enter 80C amount"
           id="floatingTextarea"
           ref={EightC}
-          onChange={eightyCHandler}
+          onChange={inputHandler}
         ></textarea>
         <label for="floatingTextarea">Enter 80C amount</label>
       </div>
@@ -231,7 +222,7 @@ export const Deduction = () => {
           placeholder="Enter 80D amount"
           id="floatingTextarea"
           ref={EightD}
-          onChange={eightyDHandler}
+          onChange={inputHandler}
         ></textarea>
         <label for="floatingTextarea">Enter 80D amount</label>{" "}
       </div>
@@ -242,7 +233,7 @@ export const Deduction = () => {
           placeholder="Enter 80TTA amount"
           id="floatingTextarea"
           ref={EightTta}
-          onChange={eightyTtaHandler}
+          onChange={inputHandler}
         ></textarea>
         <label for="floatingTextarea">Enter 80TTA amount</label>
       </div>
@@ -253,7 +244,7 @@ export const Deduction = () => {
           placeholder="Enter rent pay amount"
           id="floatingTextarea"
           ref={Rent}
-          onChange={rentHandler}
+          onChange={inputHandler}
         ></textarea>
         <label for="floatingTextarea">Enter rent pay amount</label>
       </div>
@@ -267,7 +258,7 @@ export const Deduction = () => {
             name="inlineRadioOptions"
             id="inlineRadio1"
             value="yes"
-            ref={yesInMetro}
+            onChange={yesHandler}
           />
           <label class="form-check-label" for="inlineRadio1">
             Yes
@@ -278,16 +269,32 @@ export const Deduction = () => {
             class="form-check-input"
             type="radio"
             name="inlineRadioOptions"
-            id="inlineRadio2"
+            id="inlineRadio1"
             value="no"
-            ref={NotInMetro}
+            onChange={yesHandler}
           />
           <label class="form-check-label" for="inlineRadio2">
             No
           </label>
         </div>
       </div>
-
+      {state.state.msg === "" ? (
+        ""
+      ) : (
+        <div
+          class="alert alert-warning alert-dismissible fade show"
+          role="alert"
+        >
+          <strong>{state.state.msg}</strong>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+            onClick={CloseHandler}
+          ></button>
+        </div>
+      )}
       <button
         type="button"
         class="btn btn-outline-success mt-3 button"

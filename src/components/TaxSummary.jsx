@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { DataContext } from "../App";
 import "../App.css";
 export const TaxSummary = () => {
@@ -8,30 +8,14 @@ export const TaxSummary = () => {
     contextData.setTabValue("2");
     // tracking data at back button
     contextData.setState({
+      ...contextData.state,
       backButton: true,
-      standardDeduction: 50000,
-      eightyC: contextData.state.eightyC,
-      eightyTta: contextData.state.eightyTta,
-      eightyD: contextData.state.eightyD,
-      rent: contextData.state.rent,
-      BasiceSalary: contextData.state.BasiceSalary,
-      Hra: contextData.state.Hra,
-      otherAllowence: contextData.state.otherAllowence,
-      lta: contextData.state.lta,
-      HraByRent: contextData.state.HraByRent,
-      HraExmption: contextData.state.HraExmption,
-      totalSalary: contextData.state.totalSalary,
-      totalDeduction: contextData.state.totalDeduction,
-      taxableAmount: contextData.state.taxableAmount,
-      newTax: contextData.state.newTax,
-      oldTax: contextData.state.oldTax,
     });
   };
-  // reset
+  // reset button function
   const ResetHandler = () => {
     window.location.reload();
   };
-  useEffect(() => {}, []);
   return (
     <div>
       <table class="table table-hover table-striped summary">

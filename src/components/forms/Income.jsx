@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { DataContext } from "../../App";
 export const Income = () => {
   // refs for input field
@@ -7,7 +7,6 @@ export const Income = () => {
   const otherAllowence = useRef();
   const lta = useRef();
   const state = useContext(DataContext);
-  console.log(state.state);
   // regex for validation
   const regex = /^[0-9\b]+$/;
   useEffect(() => {
@@ -25,27 +24,18 @@ export const Income = () => {
     }
   }, []);
   // input field validation
-  const basicSaleryHandler = () => {
+  const inputHandler = () => {
     if (!regex.test(basicSalary.current.value)) {
       basicSalary.current.value = "";
-    }
-  };
-  const hraHandler = () => {
-    if (!regex.test(hra.current.value)) {
+    } else if (!regex.test(hra.current.value)) {
       hra.current.value = "";
-    }
-  };
-  const otherHandler = () => {
-    if (!regex.test(otherAllowence.current.value)) {
+    } else if (!regex.test(otherAllowence.current.value)) {
       otherAllowence.current.value = "";
-    }
-  };
-  const ltaHandler = () => {
-    if (!regex.test(lta.current.value)) {
+    } else if (!regex.test(lta.current.value)) {
       lta.current.value = "";
     }
   };
-  // calculating total salry
+  // calculating total salary
   let totalSalary;
   const totalIncome = () => {
     totalSalary =
@@ -63,22 +53,21 @@ export const Income = () => {
       lta.current.value === ""
     ) {
       state.setState({
+        ...state.state,
         msg: "Please fill all the field and if not valid then write 0",
       });
     } else {
       state.setTabValue("2");
       totalIncome();
       state.setState({
+        ...state.state,
         BasiceSalary: basicSalary.current.value,
         Hra: hra.current.value,
         otherAllowence: otherAllowence.current.value,
         lta: lta.current.value,
         standardDeduction: 50000,
         totalSalary: totalSalary,
-        eightyC: state.state.eightyC,
-        eightyTta: state.state.eightyTta,
-        eightyD: state.state.eightyD,
-        rent: state.state.rent,
+        msg: "",
       });
     }
   };
@@ -95,7 +84,7 @@ export const Income = () => {
           placeholder="Enter your basic salary"
           id="floatingTextarea"
           ref={basicSalary}
-          onChange={basicSaleryHandler}
+          onChange={inputHandler}
         ></textarea>
         <label for="floatingTextarea">Enter your basic salary</label>
       </div>
@@ -106,7 +95,7 @@ export const Income = () => {
           placeholder="HRA"
           id="floatingTextarea"
           ref={hra}
-          onChange={hraHandler}
+          onChange={inputHandler}
         ></textarea>
         <label for="floatingTextarea">HRA</label>
       </div>
@@ -117,7 +106,7 @@ export const Income = () => {
           placeholder="Any other allowence"
           id="floatingTextarea"
           ref={otherAllowence}
-          onChange={otherHandler}
+          onChange={inputHandler}
         ></textarea>
         <label for="floatingTextarea">Any other allowence</label>{" "}
       </div>
@@ -128,7 +117,7 @@ export const Income = () => {
           placeholder="LTA"
           id="floatingTextarea"
           ref={lta}
-          onChange={ltaHandler}
+          onChange={inputHandler}
         ></textarea>
         <label for="floatingTextarea">LTA</label>
       </div>
