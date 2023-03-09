@@ -1,92 +1,57 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef} from "react";
 import { DataContext } from "../../App";
+
 export const Deduction = () => {
   // regex for validation
   const regex = /^[0-9\b]+$/;
-  // context state
+  // context state 
   const state = useContext(DataContext);
   // refs for input field
-  const EightC = useRef();
-  const EightD = useRef();
-  const EightTta = useRef();
+  const EightyC = useRef();
+  const EightyD = useRef();
+  const EightyTta = useRef();
   const Rent = useRef();
   // input value
   useEffect(() => {
-    if (EightC.current.value === "") {
-      EightC.current.value = state.state.eightyC;
+    if (EightyC.current.value === "") {
+      EightyC.current.value = state.state.eightyC;
     }
-    if (EightD.current.value === "") {
-      EightD.current.value = state.state.eightyD;
+    if (EightyD.current.value === "") {
+      EightyD.current.value = state.state.eightyD;
     }
-    if (EightTta.current.value === "") {
-      EightTta.current.value = state.state.eightyTta;
+    if (EightyTta.current.value === "") {
+      EightyTta.current.value = state.state.eightyTta;
     }
     if (Rent.current.value === "") {
       Rent.current.value = state.state.rent;
     }
   }, []);
-
   // validation
   const inputHandler = () => {
-    if (!regex.test(EightC.current.value)) {
-      EightC.current.value = "";
-    } else if (!regex.test(EightD.current.value)) {
-      EightD.current.value = "";
-    } else if (!regex.test(EightTta.current.value)) {
-      EightTta.current.value = "";
+    if (!regex.test(EightyC.current.value)) {
+      EightyC.current.value = "";
+    } else if (!regex.test(EightyD.current.value)) {
+      EightyD.current.value = "";
+    } else if (!regex.test(EightyTta.current.value)) {
+      EightyTta.current.value = "";
     } else if (!regex.test(Rent.current.value)) {
       Rent.current.value = "";
     }
   };
+  let totalDeduction2;
+  const metroHandler = (e) => {
+    state.setState({
+      ...state.state,
+      metro: e.target.value,
+    });
+  };
 
-  const yesHandler = (e) => {
-    state.setState({ ...state.state, metro: e.target.value });
-  };
-  // variables
-  let hraEmption;
-  let hrabyrent;
-  let eightyC1;
-  let eightyTta1;
-  let eightyD1;
-  let taxableAmount1;
-  let tax;
-  let Newtax;
-  // calculating Hra exemption
-  const hraExamption = () => {
-    const HraByEmp = state.state.Hra;
-    hrabyrent =
-      Rent.current.value - state.state.BasiceSalary * 0.1 > 0
-        ? Rent.current.value - state.state.BasiceSalary * 0.1
-        : 0;
-    let halfOfSalary;
-    if (state.state.metro === "yes") {
-      halfOfSalary = state.state.BasiceSalary * 0.5;
-    } else if (state.state.metro === "no") {
-      halfOfSalary = state.state.BasiceSalary * 0.4;
-    }
-    hraEmption =
-      Math.min(HraByEmp, hrabyrent, halfOfSalary) > 0
-        ? Math.min(HraByEmp, hrabyrent, halfOfSalary)
-        : 0;
-  };
-  // Calculating total deduction
-  let totalDeduction1;
-  const totalDeduction = () => {
-    totalDeduction1 =
-      state.state.standardDeduction +
-      parseInt(eightyC1) +
-      parseInt(eightyD1) +
-      parseInt(eightyTta1) +
-      hraEmption;
-    // state.setState({ ...state.state, totalDeduction: totalDeduction1 });
-    console.log(totalDeduction1);
-  };
-  // Calculate handler
   const CalculateHandler = () => {
+    // validation
     if (
-      EightC.current.value === "" ||
-      EightD.current.value === "" ||
-      EightTta.current.value === "" ||
+      EightyC.current.value === "" ||
+      EightyD.current.value === "" ||
+      EightyTta.current.value === "" ||
       Rent.current.value === "" ||
       state.state.metro === ""
     ) {
@@ -95,43 +60,85 @@ export const Deduction = () => {
         msg: "Please fill all the field and if not valid then write 0",
       });
     } else {
+      // Changing tab value for navigating other page
       state.setTabValue("3");
-      eightyC1 = EightC.current.value > 150000 ? 150000 : EightC.current.value;
-      eightyTta1 =
-        EightTta.current.value > 8000 ? 8000 : EightTta.current.value;
-      eightyD1 = EightD.current.value > 12000 ? 12000 : EightD.current.value;
-      hraExamption();
-      totalDeduction();
-      console.log(state.state.totalSalary - state.state.totalDeduction);
-      taxableAmount1 =
-        state.state.totalSalary - state.state.totalDeduction > 0
-          ? state.state.totalSalary - state.state.totalDeduction
-          : 0;
-      console.log(taxableAmount1);
-      // state.setState({...state.state, })
+      let salarybyMetro;
+      // Checking that the user is living in metro city or not
+      if (state.state.metro === "yes") {
+        salarybyMetro = state.state.BasiceSalary * 0.5;
+        state.setState({ ...state.state, metro: "yes" });
+      } else if (state.state.metro === "no") {
+        salarybyMetro = state.state.BasiceSalary * 0.4;
+        state.setState({ ...state.state, metro: "no" });
+      }
+      let hraByRent =
+          Rent.current.value - state.state.BasiceSalary * 0.1 > 0
+            ? Rent.current.value - state.state.BasiceSalary * 0.1
+            : 0,
+        hraexmption1 =
+          Math.min(
+            parseInt(state.state.Hra),
+            parseInt(hraByRent),
+            parseInt(salarybyMetro)
+          ) > 0
+            ? Math.min(
+                parseInt(state.state.Hra),
+                parseInt(hraByRent),
+                parseInt(salarybyMetro)
+              )
+            : 0;
+      // validation for 80C,80D and for 80TTA
+      let v1, v2, v3;
+      v1 =
+        EightyC.current.value > 150000
+          ? 150000
+          : parseInt(EightyC.current.value);
+      v2 =
+        EightyD.current.value > 12000 ? 12000 : parseInt(EightyD.current.value);
+      v3 =
+        EightyTta.current.value > 8000
+          ? 8000
+          : parseInt(EightyTta.current.value);
+      totalDeduction2 =
+        parseInt(state.state.standardDeduction) + v1 + v2 + v3 + hraexmption1;
+      // calling existing tax
       existingTax();
+      // calling new tax
       newTax();
+      // setting all state data here..
       state.setState({
         ...state.state,
-        standardDeduction: 50000,
-        eightyC: eightyC1,
-        eightyTta: eightyTta1,
-        eightyD: eightyD1,
         rent: Rent.current.value,
-        taxableAmount: taxableAmount1,
-        HraByRent: hrabyrent,
-        HraExmption: hraEmption,
-        totalDeduction: totalDeduction1,
+        msg: "",
+        eightyC: v1,
+        eightyD: v2,
+        eightyTta: v3,
+        // Here i am calculating hra by rent
+        HraByRent:
+          Rent.current.value - state.state.BasiceSalary * 0.1 > 0
+            ? Rent.current.value - state.state.BasiceSalary * 0.1
+            : 0,
+        // setting hra Exmption
+        HraExmption: hraexmption1,
+        totalDeduction: totalDeduction2,
+        // calculating taxable amount
+        taxableAmount:
+          state.state.totalSalary - totalDeduction2 > 0
+            ? state.state.totalSalary - totalDeduction2
+            : 0,
         newTax: Newtax,
         oldTax: tax,
       });
     }
   };
-  console.log(state.state);
 
+  let tax, Newtax;
   // Calculaing taxable amount according to old tax regime
   const existingTax = () => {
-    let taxamount = taxableAmount1;
+    let taxamount =
+      state.state.totalSalary - totalDeduction2 > 0
+        ? state.state.totalSalary - totalDeduction2
+        : 0;
     if (taxamount <= 250000) {
       tax = 0;
     } else if (taxamount >= 250001 && taxamount <= 500000) {
@@ -143,12 +150,14 @@ export const Deduction = () => {
     } else if (taxamount > 1000000) {
       taxamount = taxamount - 1000000;
       tax = taxamount * 0.3 + 112500;
-      console.log(taxamount);
     }
   };
   // Calculating taxable amount according to new tax regime
   const newTax = () => {
-    let taxamount = taxableAmount1;
+    let taxamount =
+      state.state.totalSalary - totalDeduction2 > 0
+        ? state.state.totalSalary - totalDeduction2
+        : 0;
     if (taxamount <= 250000) {
       Newtax = 0;
     } else if (taxamount >= 250001 && taxamount <= 500000) {
@@ -171,22 +180,9 @@ export const Deduction = () => {
       Newtax = taxamount * 0.3 + 187500;
     }
   };
-  // back handler
+  // Back button handler
   const BackHandler = () => {
-    eightyC1 = EightC.current.value > 150000 ? 150000 : EightC.current.value;
-    eightyTta1 = EightTta.current.value > 8000 ? 8000 : EightTta.current.value;
-    eightyD1 = EightD.current.value > 12000 ? 12000 : EightD.current.value;
     state.setTabValue("1");
-    // tracking data at back button
-    state.setState({
-      ...state.state,
-      backButton: true,
-      standardDeduction: 50000,
-      eightyC: eightyC1,
-      eightyTta: eightyTta1,
-      eightyD: eightyD1,
-      rent: Rent.current.value,
-    });
   };
   // close validation msg
   const CloseHandler = () => {
@@ -194,123 +190,128 @@ export const Deduction = () => {
   };
   return (
     <div>
-      <div class="form-floating mt-4">
-        <textarea
-          class="form-control"
-          style={{ resize: "none" }}
-          placeholder="Standard deduction(50,000)"
-          id="floatingTextarea"
-          value={50000}
-        ></textarea>
-        <label for="floatingTextarea">Standard deduction(50,000)</label>
-      </div>
-      <div class="form-floating mt-4">
-        <textarea
-          class="form-control"
-          style={{ resize: "none" }}
-          placeholder="Enter 80C amount"
-          id="floatingTextarea"
-          ref={EightC}
-          onChange={inputHandler}
-        ></textarea>
-        <label for="floatingTextarea">Enter 80C amount</label>
-      </div>
-      <div class="form-floating mt-4">
-        <textarea
-          class="form-control"
-          style={{ resize: "none" }}
-          placeholder="Enter 80D amount"
-          id="floatingTextarea"
-          ref={EightD}
-          onChange={inputHandler}
-        ></textarea>
-        <label for="floatingTextarea">Enter 80D amount</label>{" "}
-      </div>
-      <div class="form-floating mt-4">
-        <textarea
-          class="form-control"
-          style={{ resize: "none" }}
-          placeholder="Enter 80TTA amount"
-          id="floatingTextarea"
-          ref={EightTta}
-          onChange={inputHandler}
-        ></textarea>
-        <label for="floatingTextarea">Enter 80TTA amount</label>
-      </div>
-      <div class="form-floating mt-4">
-        <textarea
-          class="form-control"
-          style={{ resize: "none" }}
-          placeholder="Enter rent pay amount"
-          id="floatingTextarea"
-          ref={Rent}
-          onChange={inputHandler}
-        ></textarea>
-        <label for="floatingTextarea">Enter rent pay amount</label>
-      </div>
-      {/* Radio button for metro area */}
-      <div className="mt-5">
-        <b className="mx-3">Do you live in metro?</b>
-        <div class="form-check form-check-inline">
-          <input
-            class="form-check-input"
-            type="radio"
-            name="inlineRadioOptions"
-            id="inlineRadio1"
-            value="yes"
-            onChange={yesHandler}
-          />
-          <label class="form-check-label" for="inlineRadio1">
-            Yes
-          </label>
+      {" "}
+      <div>
+        <div class="form-floating mt-4">
+          <textarea
+            class="form-control"
+            style={{ resize: "none" }}
+            placeholder="Standard deduction(50,000)"
+            id="floatingTextarea"
+            value={50000}
+          ></textarea>
+          <label for="floatingTextarea">Standard deduction(50,000)</label>
         </div>
-        <div class="form-check form-check-inline">
-          <input
-            class="form-check-input"
-            type="radio"
-            name="inlineRadioOptions"
-            id="inlineRadio1"
-            value="no"
-            onChange={yesHandler}
-          />
-          <label class="form-check-label" for="inlineRadio2">
-            No
-          </label>
+        <div class="form-floating mt-4">
+          <textarea
+            class="form-control"
+            style={{ resize: "none" }}
+            placeholder="Enter 80C amount"
+            id="floatingTextarea"
+            ref={EightyC}
+            onChange={inputHandler}
+          ></textarea>
+          <label for="floatingTextarea">Enter 80C amount</label>
         </div>
-      </div>
-      {state.state.msg === "" ? (
-        ""
-      ) : (
-        <div
-          class="alert alert-warning alert-dismissible fade show"
-          role="alert"
+        <div class="form-floating mt-4">
+          <textarea
+            class="form-control"
+            style={{ resize: "none" }}
+            placeholder="Enter 80D amount"
+            id="floatingTextarea"
+            ref={EightyD}
+            onChange={inputHandler}
+          ></textarea>
+          <label for="floatingTextarea">Enter 80D amount</label>{" "}
+        </div>
+        <div class="form-floating mt-4">
+          <textarea
+            class="form-control"
+            style={{ resize: "none" }}
+            placeholder="Enter 80TTA amount"
+            id="floatingTextarea"
+            ref={EightyTta}
+            onChange={inputHandler}
+          ></textarea>
+          <label for="floatingTextarea">Enter 80TTA amount</label>
+        </div>
+        <div class="form-floating mt-4">
+          <textarea
+            class="form-control"
+            style={{ resize: "none" }}
+            placeholder="Enter rent pay amount"
+            id="floatingTextarea"
+            ref={Rent}
+            onChange={inputHandler}
+          ></textarea>
+          <label for="floatingTextarea">Enter rent pay amount</label>
+        </div>
+        {/* Radio button for metro area */}
+        <div className="mt-5">
+          <b className="mx-3">Do you live in metro?</b>
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="inlineRadioOptions"
+              id="inlineRadio1"
+              value="yes"
+              onChange={metroHandler}
+              // checked
+            />
+            <label class="form-check-label" for="inlineRadio1">
+              Yes
+            </label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="inlineRadioOptions"
+              id="inlineRadio1"
+              value="no"
+              onChange={metroHandler}
+              // checked={state.state.checked}
+            />
+            <label class="form-check-label" for="inlineRadio2">
+              No
+            </label>
+          </div>
+        </div>
+        {state.state.msg === "" ? (
+          ""
+        ) : (
+          <div
+            class="alert alert-warning alert-dismissible fade show"
+            role="alert"
+          >
+            <strong>{state.state.msg}</strong>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+              onClick={CloseHandler}
+            ></button>
+          </div>
+        )}
+        <button
+          type="button"
+          class="btn btn-outline-success mt-3 button"
+          style={{ float: "right" }}
+          onClick={CalculateHandler}
         >
-          <strong>{state.state.msg}</strong>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="alert"
-            aria-label="Close"
-            onClick={CloseHandler}
-          ></button>
-        </div>
-      )}
-      <button
-        type="button"
-        class="btn btn-outline-success mt-3 button"
-        style={{ float: "right" }}
-        onClick={CalculateHandler}
-      >
-        Calculate
-      </button>
-      <button
-        type="button"
-        class="btn btn-outline-success mt-3 button"
-        style={{ float: "left" }}
-        onClick={BackHandler}
-      >
-        Back
-      </button>
+          Calculate
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-success mt-3 button"
+          style={{ float: "left" }}
+          onClick={BackHandler}
+        >
+          Back
+        </button>
+      </div>
     </div>
   );
 };

@@ -23,7 +23,9 @@ function App() {
     oldTax: "",
     msg: "",
     metro: "",
-    backButton: false,
+    cheked:false,
+    // backButton: false,
+    otherIncome:""
   });
   return (
     <div className="App">

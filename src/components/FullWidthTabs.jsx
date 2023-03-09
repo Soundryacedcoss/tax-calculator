@@ -5,13 +5,13 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import { Income } from "./forms/Income";
-import { Deduction } from "./forms/Deduction";
+// import { Deduction1 } from "./forms/Deduction";
 import { TaxSummary } from "./TaxSummary";
 import { DataContext } from "../App";
+import { Deduction } from "./forms/Deduction";
 export default function FullWidthTabs() {
   const StateValue = useContext(DataContext);
-  const handleChange = () => {
-  };
+  const handleChange = () => {};
   return (
     <Box sx={{ width: "100%", typography: "body1" }}>
       <TabContext value={StateValue.tabValue}>

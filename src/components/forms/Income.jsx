@@ -37,13 +37,19 @@ export const Income = () => {
   };
   // calculating total salary
   let totalSalary;
+  let otherIncome;
   const totalIncome = () => {
+    otherIncome =
+      parseInt(hra.current.value) +
+      parseInt(lta.current.value) +
+      parseInt(otherAllowence.current.value);
     totalSalary =
       parseInt(basicSalary.current.value) +
       parseInt(hra.current.value) +
       parseInt(lta.current.value) +
       parseInt(otherAllowence.current.value);
   };
+  console.log("Income", state.state);
   // next button handler
   const NextHandler = () => {
     if (
@@ -68,6 +74,7 @@ export const Income = () => {
         standardDeduction: 50000,
         totalSalary: totalSalary,
         msg: "",
+        otherIncome: otherIncome,
       });
     }
   };
